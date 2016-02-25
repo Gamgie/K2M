@@ -16,11 +16,15 @@ public class K2SBody : MonoBehaviour {
 
     public bool boneIsCentered;
 
-    private Transform[] joints;
-    private Transform[] bones;
+    [HideInInspector]
+    public Transform[] joints;
+    [HideInInspector]
+    public Transform[] bones;
 
-    int numJoints = 25;
-    int numBones = 24;
+    [HideInInspector]
+    public int numJoints = 25;
+    [HideInInspector]
+    public int numBones = 24;
 
     private Dictionary<Kinect.JointType, Kinect.JointType> boneMap = new Dictionary<Kinect.JointType, Kinect.JointType>()
     {

@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using SaveIt;
+
 
 [ExecuteInEditMode]
 public class OffCenterProjection : MonoBehaviour {
@@ -11,12 +13,13 @@ public class OffCenterProjection : MonoBehaviour {
 	public float bottom = -0.2f;
 	public float factor = 1.0f;
 
-	public bool disable;
+    public bool loadConfigOnStart;
+    public bool saveConfigOnExit;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
+    // Use this for initialization
+    void Start () {
+        if (loadConfigOnStart) loadConfig();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -24,21 +27,16 @@ public class OffCenterProjection : MonoBehaviour {
 	}
 	
 	void LateUpdate () {
-		if (disable) {
-			GetComponent<Camera>().ResetProjectionMatrix();
-			enabled = false;
-			disable =false;
-			return;
-		}
 
-    Camera cam  = GetComponent<Camera>();
-    cam.aspect = .6f;
-    right = -left;
-    Matrix4x4 m  = PerspectiveOffCenter(
-        left/100, right/100, bottom/100, top/100,
-        cam.nearClipPlane, cam.farClipPlane );
-    cam.projectionMatrix = m;
-}
+        Camera cam  = GetComponent<Camera>();
+        cam.aspect = .6f;
+        right = -left;
+        Matrix4x4 m  = PerspectiveOffCenter(
+            left/100, right/100, bottom/100, top/100,
+            cam.nearClipPlane, cam.farClipPlane );
+
+        cam.projectionMatrix = m;
+    }
 
 	static Matrix4x4 PerspectiveOffCenter(
 	   float left, float right,float bottom,float top,float near ,float far ) 
@@ -58,4 +56,37 @@ public class OffCenterProjection : MonoBehaviour {
 	    m[3,0] = 0;  m[3,1] = 0;  m[3,2] = e;  m[3,3] = 0;
 	    return m;
 	}
+
+
+    void OnDestroy()
+    {
+        if (saveConfigOnExit) saveConfig();
+    }
+
+    public void saveConfig()
+    {
+        SaveContext saveContext = SaveContext.ToFile("offCenterCamera");
+        saveContext.Save<float>(left, "left");
+        saveContext.Save<float>(top, "top");
+        saveContext.Save<float>(bottom, "bottom");
+        saveContext.Save<Vector3>(transform.position, "position");
+        saveContext.Save<Quaternion>(transform.rotation, "rotation");
+        saveContext.Flush();
+    }
+
+    public void loadConfig()
+    {
+        LoadContext loadContext = LoadContext.FromFile("offCenterCamera");
+        left = loadContext.Load<float>("left");
+        top = loadContext.Load<float>("top");
+        bottom = loadContext.Load<float>("bottom");
+        transform.position = loadContext.Load<Vector3>("position");
+        transform.rotation = loadContext.Load<Quaternion>("rotation");
+    }
+
+    public void disableAndReset()
+    {
+        GetComponent<Camera>().ResetProjectionMatrix();
+        enabled = false;
+    }
 }

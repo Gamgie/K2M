@@ -6,6 +6,7 @@ public class FTWPClient : MonoBehaviour {
 
 
     OSCServer server;
+    
     public static Vector3 planePosition;
     public float scale = 1;
 
