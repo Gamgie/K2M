@@ -6,8 +6,8 @@ using System.Collections.Generic;
 public class FTWPPlane : MonoBehaviour {
 
 
-    string targetHost = "127.0.0.1";
-    string targetPort = "9082";
+    public string targetHost = "127.0.0.1";
+    public string targetPort = "9082";
 
     OSCClient client;
 
@@ -29,10 +29,9 @@ public class FTWPPlane : MonoBehaviour {
 
         OSCMessage m;
         m = new OSCMessage("/ftwp/position");
-        List<object> args = new List<object>();
-        args.Add(transform.localPosition.x);
-        args.Add(transform.localPosition.y);
-        args.Add(transform.localPosition.z);
+        m.Append<float>(transform.position.x);
+        m.Append<float>(transform.position.y);
+        m.Append<float>(transform.position.z);
         client.SendTo(m, targetHost, tPort);
     }
 }

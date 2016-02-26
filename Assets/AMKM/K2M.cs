@@ -114,6 +114,7 @@ public class K2M : MonoBehaviour
             if (Time.time - lastSendTime > sendTime)
             {
                 sendBodiesData();
+                lastSendTime = Time.time;
             }
         }
         
@@ -148,7 +149,7 @@ public class K2M : MonoBehaviour
                 bool isExtended = false;
                 for(int e=0;e<extendedSkeletonIndices.Length;e++)
                 {
-                    if(extendedSkeletonIndices[i] == e)
+                    if(extendedSkeletonIndices[e] == i)
                     {
                         isExtended = true;
                     }
