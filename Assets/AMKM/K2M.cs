@@ -18,6 +18,8 @@ public class K2M : MonoBehaviour
     public string targetHost = "127.0.0.1";
     public string targetPort = "9090";
 
+    public bool sendExtendedSkeleton;
+    int[] extendedSkeletonIndices = { 6, 10, 12, 14, 16, 18, 20, 21, 22, 23, 24 };
 
     private Dictionary<ulong, K2MBody> _Bodies = new Dictionary<ulong, K2MBody>();
     private BodySourceManager _BodyManager;
@@ -135,18 +137,33 @@ public class K2M : MonoBehaviour
         m.Append<int>(body.trackingId);
         m.Append<int>(body.leftHandState);
         m.Append<int>(body.rightHandState);
+        m.Append<int>(sendExtendedSkeleton?1:0);
         client.SendTo(m, targetHost, tPort);
 
         for(int i=0;i<body.numJoints;i++)
         {
+
+            if(!sendExtendedSkeleton)
+            {
+                bool isExtended = false;
+                for(int e=0;e<extendedSkeletonIndices.Length;e++)
+                {
+                    if(extendedSkeletonIndices[i] == e)
+                    {
+                        isExtended = true;
+                    }
+                }
+                if (!isExtended) continue;
+            }
+
             Transform jt = body.joints[i];
 
             m = new OSCMessage("/k2m/joint");
             m.Append<int>(body.trackingId);
             m.Append<int>(i);
-            m.Append<float>(jt.localPosition.x);
-            m.Append<float>(jt.localPosition.y);
-            m.Append<float>(jt.localPosition.z);
+            m.Append<float>(jt.position.x);
+            m.Append<float>(jt.position.y);
+            m.Append<float>(jt.position.z);
             client.SendTo(m, targetHost, tPort);
         }
     }
