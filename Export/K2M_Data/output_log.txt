@@ -1,0 +1,97 @@
+Initialize engine version: 5.3.2f1 (e87ab445ead0)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GTX 780M (ID=0x119f)
+    Vendor:   NVIDIA
+    VRAM:     3072 MB
+Cluster Renderer Log : ARG list
+D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M.exe
+Begin MonoManager ReloadAssembly
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\SaveIt.dll (this message is harmless)
+Loading D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\SaveIt.dll into Unity Child Domain
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\SaveIt.SharpZLib.dll (this message is harmless)
+Loading D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\SaveIt.SharpZLib.dll into Unity Child Domain
+- Completed reload, in  0.042 seconds
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: D:\Documents\Pro\Projects\AM\K2M\K2M\Export\K2M_Data\Managed\System.dll (this message is harmless)
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 0.460154 ms
+Depth Width/Height 512 / 424
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Using SaveIt Basic version.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 3370 -> priority: 1 
+  Thread -> id: 2194 -> priority: 1 
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Destroy Body
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+

@@ -5,15 +5,21 @@ using Kinect = Windows.Kinect;
 using UnityOSC;
 
 [RequireComponent(typeof(BodySourceManager))]
-public class K2S : MonoBehaviour
+public class K2M : MonoBehaviour
 {
     public GameObject bodyPrefab;
 
-    bool sendOSC;
+    
+    public bool sendOSC = true;
+    [Range(1,60)]
+    public int sendRate;
+    float lastSendTime = 0;
+
     public string targetHost = "127.0.0.1";
     public string targetPort = "9090";
 
-    private Dictionary<ulong, K2SBody> _Bodies = new Dictionary<ulong, K2SBody>();
+
+    private Dictionary<ulong, K2MBody> _Bodies = new Dictionary<ulong, K2MBody>();
     private BodySourceManager _BodyManager;
 
     OSCClient client;
@@ -67,9 +73,8 @@ public class K2S : MonoBehaviour
                 _Bodies.Remove(trackingId);
 
                 OSCMessage m;
-                m = new OSCMessage("/k2s/body/left");
-                List<object> args = new List<object>();
-                args.Add(trackingId);
+                m = new OSCMessage("/k2m/body/left");
+                m.Append<int>((int)trackingId);
                 client.SendTo(m, targetHost, tPort);
             }
         }
@@ -86,47 +91,62 @@ public class K2S : MonoBehaviour
                 if (!_Bodies.ContainsKey(body.TrackingId))
                 {
                     
-                    _Bodies[body.TrackingId] = GameObject.Instantiate(bodyPrefab).GetComponent<K2SBody>();
+                    _Bodies[body.TrackingId] = GameObject.Instantiate(bodyPrefab).GetComponent<K2MBody>();
+                    _Bodies[body.TrackingId].trackingId = (int)body.TrackingId;
                     _Bodies[body.TrackingId].transform.parent = transform;
                     
                     OSCMessage m;
-                    m = new OSCMessage("/k2s/body/entered");
-                    List<object> args = new List<object>();
-                    args.Add(body.TrackingId);
-                    client.SendTo(m, targetHost, tPort);
+                    m = new OSCMessage("/k2m/body/entered");
+                    m.Append<int>((int)body.TrackingId);
+                    client.SendTo(m, targetHost, tPort);                    
                 }
 
-                updateBody(body);
+                _Bodies[body.TrackingId].updateBody(body);
+
+            }
+        }
+
+        if (sendOSC)
+        {
+            float sendTime = 1f / sendRate;
+            if (Time.time - lastSendTime > sendTime)
+            {
+                sendBodiesData();
             }
         }
         
     }
 
-    void updateBody(Kinect.Body body)
+    void sendBodiesData()
+    {
+        foreach(KeyValuePair<ulong,K2MBody> body in _Bodies)
+        {
+            sendBodyData(body.Value);
+        }
+    }
+
+    void sendBodyData(K2MBody body)
     {
         int tPort = int.Parse(targetPort);
-
-        K2SBody b = _Bodies[body.TrackingId];
-        b.updateBody(body);
+         
 
         OSCMessage m;
-        m = new OSCMessage("/k2s/body/update");
-        List<object> args = new List<object>();
-        args.Add(body.TrackingId);
-        args.Add((int)body.HandLeftState);
-        args.Add((int)body.HandRightState);
+        m = new OSCMessage("/k2m/body/update");
+        m.Append<int>(body.trackingId);
+        m.Append<int>(body.leftHandState);
+        m.Append<int>(body.rightHandState);
         client.SendTo(m, targetHost, tPort);
 
-        for(int i=0;i<b.numJoints;i++)
+        for(int i=0;i<body.numJoints;i++)
         {
-            Transform jt = b.joints[i];
+            Transform jt = body.joints[i];
 
-            m = new OSCMessage("/k2s/joint");
-            args = new List<object>();
-            args.Add(body.TrackingId);
-            args.Add(jt.localPosition.x);
-            args.Add(jt.localPosition.y);
-            args.Add(jt.localPosition.z);
+            m = new OSCMessage("/k2m/joint");
+            m.Append<int>(body.trackingId);
+            m.Append<int>(i);
+            m.Append<float>(jt.localPosition.x);
+            m.Append<float>(jt.localPosition.y);
+            m.Append<float>(jt.localPosition.z);
             client.SendTo(m, targetHost, tPort);
         }
     }

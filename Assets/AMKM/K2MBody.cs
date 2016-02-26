@@ -3,7 +3,7 @@ using System.Collections;
 using Kinect = Windows.Kinect;
 using System.Collections.Generic;
 
-public class K2SBody : MonoBehaviour {
+public class K2MBody : MonoBehaviour {
 
     public GameObject jointPrefab;
     public GameObject bonePrefab;
@@ -25,6 +25,10 @@ public class K2SBody : MonoBehaviour {
     public int numJoints = 25;
     [HideInInspector]
     public int numBones = 24;
+
+    public int leftHandState;
+    public int rightHandState;
+    public int trackingId;
 
     private Dictionary<Kinect.JointType, Kinect.JointType> boneMap = new Dictionary<Kinect.JointType, Kinect.JointType>()
     {
@@ -97,6 +101,9 @@ public class K2SBody : MonoBehaviour {
 
     public void updateBody(Kinect.Body body)
     {
+        leftHandState = (int)body.HandLeftState;
+        rightHandState = (int)body.HandRightState;
+        
         for (int i = 0; i < numJoints; i++)
         {
 
