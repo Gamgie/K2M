@@ -26,6 +26,8 @@ public class KinectPCLStreamer : MonoBehaviour {
     public bool sendAlways;
 
 
+    int curLineIndex;
+
     //WebSocket ws;
 
    // NetworkView view;
@@ -82,12 +84,21 @@ public class KinectPCLStreamer : MonoBehaviour {
 
     void sendPoints()
     {
-        for(int i=0;i<KinectCalib.instance.pcl.Length;i++)
-        {
-            byte[] data = SerializeObject<KPCL>(KinectCalib.instance.pcl[i]);
-            client.Send(data, data.Length, targetHost, int.Parse(targetPort));
-        }
+        curLineIndex = 0;
+        loopSend();
         
+    }
+
+    void loopSend()
+    {
+        if (curLineIndex >= KinectCalib.instance.pcl.Length) return;
+
+        byte[] data = SerializeObject<KPCL>(KinectCalib.instance.pcl[curLineIndex]);
+        client.Send(data, data.Length, targetHost, int.Parse(targetPort));
+
+        curLineIndex++;
+        Debug.Log("send !");
+        Invoke("loopSend", .01f);
     }
 
     byte[] SerializeObject<_T>(_T objectToSerialize)
