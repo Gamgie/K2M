@@ -73,7 +73,8 @@ public class KinectPCLStreamer : MonoBehaviour {
     void OnDestroy()
     {
         //NetworkServer.Shutdown();
-        client.Close();
+        if(client != null)
+            client.Close();
     }
 
     void OnServerInitialized()
