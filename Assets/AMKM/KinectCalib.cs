@@ -46,7 +46,7 @@ public class KinectCalib : MonoBehaviour {
             depthWidth = frameDesc.Width;
             depthHeight = frameDesc.Height;
 
-            Debug.Log("Depth Width/Height " + depthWidth + " / " + depthHeight);
+            Debug.Log("Kinect Depth Width :" + depthWidth + " / Height : " + depthHeight);
 
             if (!kinect.IsOpen)
             {
