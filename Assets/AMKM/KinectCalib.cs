@@ -8,13 +8,17 @@ using SaveIt;
 [RequireComponent(typeof(DepthSourceManager))]
 public class KinectCalib : MonoBehaviour {
 
+    // Event Handler
+    public delegate void OnPointCloudUpdateEvent(CameraSpacePoint[] pointCloud, int depthMapWidth, int depthMapHeight, int downsample);
+    public event OnPointCloudUpdateEvent OnPointCloudUpdate;
+
     public static KinectCalib instance;
 
     private KinectSensor kinect;
     private DepthSourceManager depthManager;
     private CoordinateMapper mapper;
 
-    private int depthWidth, depthHeight;
+    private int depthWidth, depthHeight, depthMapSize;
 
     [HideInInspector]
     public KPCL[] pcl;
@@ -26,6 +30,10 @@ public class KinectCalib : MonoBehaviour {
 
     public bool loadConfigOnStart;
     public bool saveConfigOnExit;
+    public bool useTCLStreamer;
+
+    [Header("Point cloud")]
+    public bool drawPointCloud;
 
     void Awake()
     {
@@ -45,6 +53,7 @@ public class KinectCalib : MonoBehaviour {
 
             depthWidth = frameDesc.Width;
             depthHeight = frameDesc.Height;
+            depthMapSize = depthHeight * depthWidth / downSample;
 
             Debug.Log("Kinect Depth Width :" + depthWidth + " / Height : " + depthHeight);
 
@@ -56,16 +65,19 @@ public class KinectCalib : MonoBehaviour {
 
         depthManager = GetComponent<DepthSourceManager>();
 
-        int numLines = depthHeight / (downSample-1);
-        pcl = new KPCL[numLines];
-        for (int i = 0; i < numLines; i++)
+        if(useTCLStreamer)
         {
-            pcl[i] = new KPCL();
-            pcl[i].points = new KPCL.Vector_3[(depthWidth / (downSample-1))];
-            
-        }
+            int numLines = depthHeight / (downSample - 1);
+            pcl = new KPCL[numLines];
+            for (int i = 0; i < numLines; i++)
+            {
+                pcl[i] = new KPCL();
+                pcl[i].points = new KPCL.Vector_3[(depthWidth / (downSample - 1))];
 
-        pcl[0].isFirst = true;
+            }
+
+            pcl[0].isFirst = true;
+        }
 
         if (loadConfigOnStart) loadConfig();
     }
@@ -73,47 +85,16 @@ public class KinectCalib : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
-        ushort[] depthMap = depthManager.GetData();
-
-        CameraSpacePoint[] realWorldPoints = new CameraSpacePoint[depthMap.Length];
-        mapper.MapDepthFrameToCameraSpace(depthMap, realWorldPoints);
-
-        int curLine = 0;
-        int pIndex = 0;
-        for(int ty = 0; ty < depthHeight; ty += downSample)
+        if(drawPointCloud)
         {
-            pIndex = 0;
-
-            for (int tx=0; tx < depthWidth; tx += downSample)
-            {
-                int index = ty * depthWidth + tx;
-                CameraSpacePoint point = realWorldPoints[index];
-
-                Vector3 pointV3 = new Vector3(mirror?-point.X:point.X, point.Y, point.Z);
-                Vector3 tPoint = transform.TransformPoint(pointV3);
-                Debug.DrawLine(tPoint, tPoint+Vector3.forward*.01f);
-
-
-                if (pcl[curLine].points.Length > pIndex)
-                {
-                    pcl[curLine].points[pIndex] = new KPCL.Vector_3(tPoint.x, tPoint.y, tPoint.z);
-                }
-                pIndex++;
-            }
-
-            curLine++;
-            
+            UpdatePointCloud();
         }
-
     }
-
 
     void OnDestroy()
     {
         if(saveConfigOnExit) saveConfig();
     }
-
 
     public void saveConfig()
     {
@@ -132,5 +113,32 @@ public class KinectCalib : MonoBehaviour {
         downSample = loadContext.Load<int>("downSample");
         transform.position = loadContext.Load<Vector3>("position");
         transform.rotation = loadContext.Load<Quaternion>("rotation");
+    }
+
+    void UpdatePointCloud()
+    {
+        ushort[] depthMap = depthManager.GetData();
+
+        CameraSpacePoint[] realWorldPoints = new CameraSpacePoint[depthMap.Length];
+        mapper.MapDepthFrameToCameraSpace(depthMap, realWorldPoints);
+
+        // Update Real world to kinect position.
+        for (int ty = 0; ty < depthHeight; ty += downSample)
+        {
+            for (int tx = 0; tx < depthWidth; tx += downSample)
+            {
+                int index = ty * depthWidth + tx;
+                CameraSpacePoint point = realWorldPoints[index];
+
+                Vector3 pointV3 = new Vector3(mirror ? -point.X : point.X, point.Y, point.Z);
+                pointV3 = transform.TransformPoint(pointV3);
+
+                realWorldPoints[index].X = pointV3.x;
+                realWorldPoints[index].Y = pointV3.y;
+                realWorldPoints[index].Z = pointV3.z;
+            }
+        }
+
+        OnPointCloudUpdate(realWorldPoints, depthWidth, depthHeight, downSample);
     }
 }

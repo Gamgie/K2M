@@ -27,6 +27,7 @@ public class FTWPPlane : MonoBehaviour {
 
         int tPort = int.Parse(targetPort);
 
+        // Convert local position in the kinect space to a world space position.
         OSCMessage m;
         m = new OSCMessage("/ftwp/position");
         m.Append<float>(transform.position.x);
