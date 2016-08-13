@@ -2,6 +2,7 @@
 using System.Collections;
 using Windows.Kinect;
 using SaveIt;
+using DG.Tweening;
 
 
 [System.Serializable]
@@ -42,6 +43,9 @@ public class KinectCalib : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+
+        PlayerPrefUpdateBroadcast.Instance.OnPlayerPrefsUpdated += OnPlayerPrefsUpdated;
+
         kinect = KinectSensor.GetDefault();
         if (kinect != null)
         {
@@ -108,11 +112,14 @@ public class KinectCalib : MonoBehaviour {
 
     public void loadConfig()
     {
-        LoadContext loadContext = LoadContext.FromFile("kinect");
+        /*LoadContext loadContext = LoadContext.FromFile("kinect");
         mirror = loadContext.Load<bool>("mirror");
         downSample = loadContext.Load<int>("downSample");
         transform.position = loadContext.Load<Vector3>("position");
-        transform.rotation = loadContext.Load<Quaternion>("rotation");
+        transform.rotation = loadContext.Load<Quaternion>("rotation");*/
+        
+        transform.DOMove(PlayerPrefs_AM.GetVector3("K2M_KinectPosition"), 0.3f);
+        transform.DORotate(PlayerPrefs_AM.GetVector3("K2M_KinectRotation"), 0.3f);
     }
 
     void UpdatePointCloud()
@@ -141,4 +148,17 @@ public class KinectCalib : MonoBehaviour {
 
         OnPointCloudUpdate(realWorldPoints, depthWidth, depthHeight, downSample);
     }
+
+    void OnPlayerPrefsUpdated(string playerPrefKey)
+    {
+        if(playerPrefKey.Contains("K2M_KinectPosition"))
+        {
+            transform.DOMove(PlayerPrefs_AM.GetVector3(playerPrefKey), 0.3f);
+        }
+        else if (playerPrefKey.Contains("K2M_KinectRotation"))
+        {
+            transform.DORotate(PlayerPrefs_AM.GetVector3(playerPrefKey), 0.3f);
+        }
+    }
+
 }

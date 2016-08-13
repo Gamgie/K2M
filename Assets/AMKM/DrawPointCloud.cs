@@ -17,7 +17,7 @@ public class DrawPointCloud : MonoBehaviour
 
     public void OnPostRender()
     {
-        PointCloudDrawer();
+       PointCloudDrawer();
     }
 
     // To show the lines in the editor
@@ -44,7 +44,7 @@ public class DrawPointCloud : MonoBehaviour
 
     void PointCloudDrawer()
     {
-        if (_pointCloud.Length != 0)
+        if (_pointCloud != null && _pointCloud.Length != 0)
         {
             int curLine = 0;
             for (int ty = 0; ty < _depthHeight; ty += _downSample)
