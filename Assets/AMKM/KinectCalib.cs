@@ -35,6 +35,7 @@ public class KinectCalib : MonoBehaviour {
 
     [Header("Point cloud")]
     public bool drawPointCloud;
+    public PointCloudDrawer pointCloudDrawer;
 
     void Awake()
     {
@@ -45,6 +46,7 @@ public class KinectCalib : MonoBehaviour {
     void Start () {
 
         PlayerPrefUpdateBroadcast.Instance.OnPlayerPrefsUpdated += OnPlayerPrefsUpdated;
+        if (loadConfigOnStart) loadConfig();
 
         kinect = KinectSensor.GetDefault();
         if (kinect != null)
@@ -82,8 +84,6 @@ public class KinectCalib : MonoBehaviour {
 
             pcl[0].isFirst = true;
         }
-
-        if (loadConfigOnStart) loadConfig();
     }
 
     // Update is called once per frame
@@ -111,15 +111,13 @@ public class KinectCalib : MonoBehaviour {
     }
 
     public void loadConfig()
-    {
-        /*LoadContext loadContext = LoadContext.FromFile("kinect");
-        mirror = loadContext.Load<bool>("mirror");
-        downSample = loadContext.Load<int>("downSample");
-        transform.position = loadContext.Load<Vector3>("position");
-        transform.rotation = loadContext.Load<Quaternion>("rotation");*/
-        
+    { 
         transform.DOMove(PlayerPrefs_AM.GetVector3("K2M_KinectPosition"), 0.3f);
         transform.DORotate(PlayerPrefs_AM.GetVector3("K2M_KinectRotation"), 0.3f);
+        downSample = (int)PlayerPrefs_AM.GetFloat("PointCloudDownSample", 5);
+        drawPointCloud = PlayerPrefs_AM.GetBool("ShowPointCloud");
+
+        pointCloudDrawer.SetDrawPointCloud(drawPointCloud);
     }
 
     void UpdatePointCloud()
@@ -158,6 +156,15 @@ public class KinectCalib : MonoBehaviour {
         else if (playerPrefKey.Contains("K2M_KinectRotation"))
         {
             transform.DORotate(PlayerPrefs_AM.GetVector3(playerPrefKey), 0.3f);
+        }
+        else if (playerPrefKey.Contains("PointCloudDownSample"))
+        {
+            downSample = (int)PlayerPrefs_AM.GetFloat(playerPrefKey, 5);
+        }
+        else if (playerPrefKey.Contains("ShowPointCloud"))
+        {
+            drawPointCloud = PlayerPrefs_AM.GetBool(playerPrefKey);
+            pointCloudDrawer.SetDrawPointCloud(drawPointCloud);
         }
     }
 

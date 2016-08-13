@@ -3,21 +3,27 @@ using System.Collections;
 using Windows.Kinect;
 
 [RequireComponent(typeof(Camera))]
-public class DrawPointCloud : MonoBehaviour
+public class PointCloudDrawer : MonoBehaviour
 {
     public Material lineMaterial;
-
     private CameraSpacePoint[] _pointCloud;
     private int _depthWidth, _depthHeight, _downSample;
+    private bool _drawPointCloud = false;
 
     void Start()
     {
         KinectCalib.instance.OnPointCloudUpdate += onPointCloudUpdate;
     }
 
+    public void SetDrawPointCloud(bool draw)
+    {
+        _drawPointCloud = draw;
+    }
+
     public void OnPostRender()
     {
-       PointCloudDrawer();
+        if(_drawPointCloud)
+            DrawPointCloud();
     }
 
     // To show the lines in the editor
@@ -25,14 +31,13 @@ public class DrawPointCloud : MonoBehaviour
     {
         if(Application.isEditor)
         {
-            PointCloudDrawer();
+            DrawPointCloud();
+
         }
     }
 
     void onPointCloudUpdate(CameraSpacePoint[] pointCloud, int depthMapWidth, int depthMapHeight, int downsample)
     {
-        /*_pointCloud = new CameraSpacePoint[pointCloud.Length];
-        pointCloud.CopyTo(this._pointCloud, pointCloud.Length);*/
         _pointCloud = pointCloud.Clone() as CameraSpacePoint[];
         this._depthWidth = depthMapWidth;
         this._depthHeight = depthMapHeight;
@@ -42,7 +47,7 @@ public class DrawPointCloud : MonoBehaviour
         Vector3 debugVector = new Vector3(debugPoint.X, debugPoint.Y, debugPoint.Z);
     }
 
-    void PointCloudDrawer()
+    void DrawPointCloud()
     {
         if (_pointCloud != null && _pointCloud.Length != 0)
         {

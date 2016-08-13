@@ -16,7 +16,7 @@ public class K2M : MonoBehaviour
     float lastSendTime = 0;
 
     public string targetHost = "127.0.0.1";
-    public string targetPort = "9090";
+    public int targetPort = 9090;
 
     public bool sendExtendedSkeleton;
     int[] extendedSkeletonIndices = { 6, 10, 12, 14, 16, 18, 20, 21, 22, 23, 24 };
@@ -30,14 +30,16 @@ public class K2M : MonoBehaviour
     {
         _BodyManager = GetComponent<BodySourceManager>();
 
-        client = new OSCClient(System.Net.IPAddress.Parse(targetHost),int.Parse(targetPort), false);
+        targetHost = PlayerPrefs_AM.GetString("OSCTargetIP", "127.0.0.1");
+        targetPort = PlayerPrefs_AM.GetInt("OSCTargetPort", 9090);
+
+        client = new OSCClient(System.Net.IPAddress.Parse(targetHost),targetPort, false);
+
+        PlayerPrefUpdateBroadcast.Instance.OnPlayerPrefsUpdated += OnPlayerPrefsUpdated;
     }
 
     void Update()
     {
-
-        int tPort = int.Parse(targetPort);
-
         if (_BodyManager == null)
         {
             return;
@@ -77,7 +79,7 @@ public class K2M : MonoBehaviour
                 OSCMessage m;
                 m = new OSCMessage("/k2m/body/left");
                 m.Append<int>((int)trackingId);
-                client.SendTo(m, targetHost, tPort);
+                client.SendTo(m, targetHost, targetPort);
             }
         }
 
@@ -100,7 +102,7 @@ public class K2M : MonoBehaviour
                     OSCMessage m;
                     m = new OSCMessage("/k2m/body/entered");
                     m.Append<int>((int)body.TrackingId);
-                    client.SendTo(m, targetHost, tPort);                    
+                    client.SendTo(m, targetHost, targetPort);                    
                 }
 
                 _Bodies[body.TrackingId].updateBody(body);
@@ -130,16 +132,13 @@ public class K2M : MonoBehaviour
 
     void sendBodyData(K2MBody body)
     {
-        int tPort = int.Parse(targetPort);
-         
-
         OSCMessage m;
         m = new OSCMessage("/k2m/body/update");
         m.Append<int>(body.trackingId);
         m.Append<int>(body.leftHandState);
         m.Append<int>(body.rightHandState);
         m.Append<int>(sendExtendedSkeleton?1:0);
-        client.SendTo(m, targetHost, tPort);
+        client.SendTo(m, targetHost, targetPort);
 
         for(int i=0;i<body.numJoints;i++)
         {
@@ -165,7 +164,15 @@ public class K2M : MonoBehaviour
             m.Append<float>(jt.position.x);
             m.Append<float>(jt.position.y);
             m.Append<float>(jt.position.z);
-            client.SendTo(m, targetHost, tPort);
+            client.SendTo(m, targetHost, targetPort);
         }
+    }
+
+    void OnPlayerPrefsUpdated(string playerPrefKey)
+    {
+        targetHost = PlayerPrefs_AM.GetString(playerPrefKey + "TargetIP", "127.0.0.1");
+        targetPort = PlayerPrefs_AM.GetInt(playerPrefKey + "TargetPort", 9090);
+
+        client = new OSCClient(System.Net.IPAddress.Parse(targetHost), targetPort, false);
     }
 }
