@@ -175,4 +175,11 @@ public class K2M : MonoBehaviour
 
         client = new OSCClient(System.Net.IPAddress.Parse(targetHost), targetPort, false);
     }
+
+    public void SendPing()
+    {
+        OSCMessage m;
+        m = new OSCMessage("/k2m/ping");
+        client.SendTo(m, targetHost, targetPort);
+    }
 }
