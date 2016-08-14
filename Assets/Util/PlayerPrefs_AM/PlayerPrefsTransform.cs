@@ -8,7 +8,7 @@ public class PlayerPrefsTransform : MonoBehaviour {
 	public bool loadAtStart;
 	public bool saveOnDestroy = true;
 
-	void Awake()
+	void Start()
 	{
 		if(loadAtStart)
 		{

@@ -14,12 +14,15 @@ public class UI_PlayerPrefsToggleValue : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		_toggle = GetComponent<Toggle>();
-		
-		if(loadAtStart)
-		{
-			Load ();
-		}
 	}
+
+    void Start()
+    {
+        if (loadAtStart)
+        {
+            Load();
+        }
+    }
 	
 	public void Save()
 	{

@@ -83,6 +83,13 @@ public class MouseCameraControl : MonoBehaviour
     public string mouseVerticalAxisName = "Mouse Y";
     public string scrollAxisName = "Mouse ScrollWheel";
 
+    private Camera _camera;
+
+    void Awake()
+    {
+        _camera = GetComponent<Camera>();
+    }
+
     void LateUpdate()
     {
         if (yaw.isActivated())
@@ -121,9 +128,16 @@ public class MouseCameraControl : MonoBehaviour
 
         if (scroll.isActivated())
         {
-            float translateZ = Input.GetAxis(scrollAxisName) * scroll.sensitivity;
+            if(_camera.orthographic)
+            {
+                _camera.orthographicSize -= Input.GetAxis(scrollAxisName) * scroll.sensitivity;
+            }
+            else
+            {
+                float translateZ = Input.GetAxis(scrollAxisName) * scroll.sensitivity;
 
-            transform.Translate(0, 0, translateZ);
+                transform.Translate(0, 0, translateZ);
+            }
         }
     }
 

@@ -13,12 +13,15 @@ public class UI_PlayerPrefsSlider : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		_slider = GetComponent<Slider>();
-
-		if(loadAtStart)
-		{
-			Load ();
-		}
 	}
+
+    void Start()
+    {
+        if (loadAtStart)
+        {
+            Load();
+        }
+    }
 
 	public void Save()
 	{
